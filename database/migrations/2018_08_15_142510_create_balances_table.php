@@ -20,7 +20,7 @@ class CreateBalancesTable extends Migration
                     ->references('id')
                     ->on('users')
                     ->onDelete('cascade');
-            $table->double('amount', 10, 2);
+            $table->double('amount', 10, 2)->default(0);
         });
     }
 

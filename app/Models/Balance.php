@@ -3,9 +3,82 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Balance extends Model
 {
     //private table = 'balance';
     public $timestamps = false;
+
+    public function deposit($value)
+    {
+
+        DB::beginTransaction();
+
+        $totalBefore = $this->amount ? $this->amount : 0;
+        $this->amount -= number_format($value, 2);
+        $deposit = $this->save();
+
+        $historic = auth()->user()->historics()->create([
+            'type' => 'I',
+            'amount' => $value,
+            'total_before' => $totalBefore,
+            'total_after' => $this->amount,
+            'date' => date('Ymd'),
+        ]);
+
+        if ($deposit && $historic) {
+            DB::commit();
+            return [
+                'success' => true,
+                'message' => 'Recarga realizada com sucesso.'
+            ];
+        } else {
+            DB::rollBack();
+            return [
+                'success' => false,
+                'message' => 'Recarga não realizada.'
+            ];
+        }
+    }
+
+    public function withdaw(float $value):Array
+    {
+        if($this->amount < $value)
+            return [
+                'success' => false,
+                'message' => 'Valor indisponivel para saque, verifique seu saldo.'
+            ];
+
+        DB::beginTransaction();
+
+        $totalBefore = $this->amount ? $this->amount : 0;
+        $this->amount -= number_format($value, 2);
+        $withdaw = $this->save();
+
+        $historic = auth()->user()->historics()->create([
+            'type' => 'O',
+            'amount' => $value,
+            'total_before' => $totalBefore,
+            'total_after' => $this->amount,
+            'date' => date('Ymd'),
+        ]);
+
+        if ($withdaw && $historic) {
+            DB::commit();
+            return [
+                'success' => true,
+                'message' => 'Retirada realizada com sucesso.'
+            ];
+        } else {
+            DB::rollBack();
+            return [
+                'success' => false,
+                'message' => 'Retirada não realizada.'
+            ];
+        }
+
+    }
+
+
 }

@@ -5,8 +5,8 @@
 @section('content_header')
     <h1>Saldo</h1>
     <ol class="breadcrumb">
-        <li><a href="">Home</a></li>
-        <li><a href="">Saldo</a></li>
+    <li><a href="{{route('admin.home')}}">Home</a></li>
+        <li><a href="{{route('admin.balance')}}">Saldo</a></li>
 
     </ol>
 @stop
@@ -15,9 +15,12 @@
     <div class="box">
         <div class="box-header">
         <a href="{{route('balance.deposit')}}" class="btn btn-primary"><i class="fa fa-cart-plus"></i>  Recarregar</a>
-            <a href="" class="btn btn-danger "><i class="fa fa-cart-arrow-down "></i> Sacar</a>
-        </div>
+    @if($amount > 0)
+        <a href="{{route('balance.withdaw')}}" class="btn btn-danger "><i class="fa fa-cart-arrow-down "></i> Sacar</a>
+    @endif
+    </div>
         <div class="box-body">
+                @include('admin.includes.alerts')
             <div class="col-lg-4 col-xs-6">
                 <div class="small-box bg-green">
                     <div class="inner">

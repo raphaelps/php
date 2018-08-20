@@ -85,7 +85,7 @@ return [
     |
     */
 
-    'dashboard_url' => 'home',
+    'dashboard_url' => 'admin',
 
     'logout_url' => 'logout',
 
@@ -111,7 +111,7 @@ return [
         'MENU DE NAVEGAÇÃO',
         [
             'text'        => 'Home',
-            'url'         => 'home',
+            'url'         => 'admin',
             'icon'        => 'dashboard',
         ],
         [
