@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Depositos')
+@section('title', 'Recarga')
 
 @section('content_header')
-    <h1>Valor a depositar</h1>
+    <h1>Valor a Recarregar</h1>
 
     <ol class="breadcrumb">
         <li><a href="">Home</a></li>

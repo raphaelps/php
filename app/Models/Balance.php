@@ -16,7 +16,7 @@ class Balance extends Model
         DB::beginTransaction();
 
         $totalBefore = $this->amount ? $this->amount : 0;
-        $this->amount -= number_format($value, 2);
+        $this->amount += number_format($value, 2,'.','');
         $deposit = $this->save();
 
         $historic = auth()->user()->historics()->create([
@@ -42,7 +42,7 @@ class Balance extends Model
         }
     }
 
-    public function withdaw(float $value):Array
+    public function withdraw(float $value):Array
     {
         if($this->amount < $value)
             return [
@@ -53,8 +53,8 @@ class Balance extends Model
         DB::beginTransaction();
 
         $totalBefore = $this->amount ? $this->amount : 0;
-        $this->amount -= number_format($value, 2);
-        $withdaw = $this->save();
+        $this->amount -= number_format($value, 2,'.','');
+        $withdraw = $this->save();
 
         $historic = auth()->user()->historics()->create([
             'type' => 'O',
@@ -64,7 +64,7 @@ class Balance extends Model
             'date' => date('Ymd'),
         ]);
 
-        if ($withdaw && $historic) {
+        if ($withdraw && $historic) {
             DB::commit();
             return [
                 'success' => true,
