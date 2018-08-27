@@ -8,8 +8,9 @@ Route::group(['middlewaer' => ['auth'], 'namespace'=>'Admin', 'prefix'=>'admin']
 
     Route::get('historic', 'BalanceController@historic')->name('balance.historic');
 
+    Route::post('transfer' , 'BalanceController@transferStore')->name('transfer.store');
     Route::get('transfer', 'BalanceController@transfer')->name('balance.transfer');
-    Route::post('transfer', 'BalanceController@confirmTransfer')->name('confirm.transfer');
+    Route::post('confirm-transfer', 'BalanceController@confirmTransfer')->name('confirm.transfer');
 
     Route::get('withdraw', 'BalanceController@withdraw')->name('balance.withdraw');
     Route::post('withdraw', 'BalanceController@withdrawStore')->name('withdraw.store');

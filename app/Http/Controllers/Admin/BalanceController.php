@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Balance;
 use App\Http\Requests\MoneyValidationFormRequest;
 use App\User;
+//use Illuminate\Support\Facades\Request;
 
 class BalanceController extends Controller
 {
@@ -64,28 +65,43 @@ class BalanceController extends Controller
 
     public function transfer()
     {
+
+
         return view('admin.balance.transfer');
 
     }
 
     public function confirmTransfer(Request $request, User $user)
     {
-        $sender = $user->getSender($request->sender);
-        dd($sender);
-/*
-        $balance = auth()->user()->balance()->firstorcreate([]);
-
-        $response = $balance->transfer($request->value);
-
-        if ($response['success'])
+        if(!$sender = $user->getSender($request->sender))
             return redirect()
-            ->route('admin.balance')
-            ->with('success', $response['message']);
+                        ->back()
+                        ->with('error','Usuario informado não encontrado');
 
-        return redirect()->back()->with('error', $response['message']);
-*/
+        return view('admin.balance.transfer-confirm', compact('sender'));
+
+        if($sender->id == auth()->user()->id)
+            return redirect()
+                        ->back()
+                        ->with('error',' Não pode trasnferir para você mesmo');
+
+        return view('admin.balance.transfer-confirm', compact('sender'));
+
     }
 
+    public function transferStore(Request $request){
+
+
+        if($sender->id == auth()->user()->id)
+            return redirect()
+                        ->back()
+                        ->with('error',' Não pode trasnferir para você mesmo');
+
+        return view('admin.balance.transfer-confirm', compact('sender'));
+
+        dd($request->all());
+
+    }
 
 
 
