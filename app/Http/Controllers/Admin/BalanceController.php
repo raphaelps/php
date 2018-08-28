@@ -16,6 +16,7 @@ class BalanceController extends Controller
         $balance = auth()->user()->balance;
 
         $amount = $balance ? $balance->amount : 0;
+
         return view('admin.balance.index', compact('amount'));
     }
 
@@ -44,7 +45,10 @@ class BalanceController extends Controller
         return view('admin.balance.withdraw');
 
     }
+/*
+classe para realizar o saque do dinheiro, usa um formrequest para obrigar a informar numero na solicitação
 
+*/
     public function withdrawStore(MoneyValidationFormRequest $request)
     {
 
@@ -66,11 +70,13 @@ class BalanceController extends Controller
     public function transfer()
     {
 
-
         return view('admin.balance.transfer');
 
     }
-
+/*
+classe para confirmar para quem sera enviado o dinheiro, faz a verificação do recebedor e se não esta enviando para a propria pessoa.
+verifica o saldo do usuario para realizar a trasnferencia.
+*/
     public function confirmTransfer(Request $request, User $user)
     {
         if(!$sender = $user->getSender($request->sender))
@@ -78,32 +84,38 @@ class BalanceController extends Controller
                         ->back()
                         ->with('error','Usuario informado não encontrado');
 
-        return view('admin.balance.transfer-confirm', compact('sender'));
-
-        if($sender->id == auth()->user()->id)
+        if($sender->id === auth()->user()->id)
             return redirect()
                         ->back()
                         ->with('error',' Não pode trasnferir para você mesmo');
 
-        return view('admin.balance.transfer-confirm', compact('sender'));
+        $balance = auth()->user()->balance;
+
+        return view('admin.balance.transfer-confirm', compact('sender', 'balance'));
 
     }
 
-    public function transferStore(Request $request){
-
-
-        if($sender->id == auth()->user()->id)
+    public function transferStore(MoneyValidationFormRequest $request, User $user)
+    {
+        if (!$sender = $user->find($request->sender_id))
             return redirect()
-                        ->back()
-                        ->with('error',' Não pode trasnferir para você mesmo');
-
-        return view('admin.balance.transfer-confirm', compact('sender'));
-
-        dd($request->all());
-
+                        ->route('balance.transfer')
+                        ->with('success', 'Recebedor Não Encontrado!');
+        $balance = auth()->user()->balance()->firstOrCreate([]);
+        $response = $balance->transfer($request->value, $sender);
+        if ($response['success'])
+            return redirect()
+                        ->route('admin.balance')
+                        ->with('success', $response['message']);
+        return redirect()
+                    ->route('balance.transfer')
+                    ->with('error', $response['message']);
     }
 
+    public function historic(){
 
+        $historics = auth()->user()->historics()->with(['userSender'])->get();
 
-
+        return view('admin.historic.index', compact('historics'));
+    }
 }

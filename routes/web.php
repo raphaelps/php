@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\BalanceController;
 
 Route::group(['middlewaer' => ['auth'], 'namespace'=>'Admin', 'prefix'=>'admin'], function () {
 
-    Route::get('historic', 'BalanceController@historic')->name('balance.historic');
+    Route::get('historic/', 'BalanceController@historic')->name('admin.historic');
 
     Route::post('transfer' , 'BalanceController@transferStore')->name('transfer.store');
     Route::get('transfer', 'BalanceController@transfer')->name('balance.transfer');
